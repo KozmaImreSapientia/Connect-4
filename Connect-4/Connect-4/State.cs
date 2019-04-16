@@ -30,8 +30,7 @@ namespace Connect_4
 
         public State(FIELD[,] board)
         {
-            this.Board = new FIELD[HEIGHT, WIDTH];
-            InitializeBoard();
+            this.Board = board;
             this.Children = new List<State>();
         }
 
