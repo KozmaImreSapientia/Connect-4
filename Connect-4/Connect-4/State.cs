@@ -14,8 +14,8 @@ namespace Connect_4
         public enum FIELD
         {
             EMPTY = 0,
-            MIN = 1,
-            MAX = 2
+            MIN = 1, //human
+            MAX = 2  //computer
         }
 
         public static readonly int WIDTH = 7;
@@ -132,6 +132,7 @@ namespace Connect_4
                         default:
                             break;
                     }
+                    Console.Write(" ");
                 }
                 Console.WriteLine();
             }

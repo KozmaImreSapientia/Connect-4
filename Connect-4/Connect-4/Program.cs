@@ -8,10 +8,53 @@ namespace Connect_4
 {
     public class Program
     {
+        private static bool usingDepth = false;
+        private static int maxDepth = -1;
+
+        private static bool usingTime = false;
+        private static int maxTime = -1; //seconds
+
         static void Main(string[] args)
         {
-            //BoardTest();
+            GetCommandLineArguments(args);
+            BoardTest();
 
+        }
+
+        private static void GetCommandLineArguments(string[] args)
+        {
+            for (int i = 0; i < args.Length; ++i)
+            {
+                switch (args[i])
+                {
+                    case "-d":
+                        i++;
+                        if (i < args.Length)
+                        {
+                            usingDepth = true;
+                            maxDepth = Convert.ToInt32(args[i]);
+                        }
+                        break;
+                    case "-t":
+                        i++;
+                        if (i < args.Length)
+                        {
+                            usingTime = true;
+                            maxTime = Convert.ToInt32(args[i]);
+                        }
+                        break;
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            //default args for testing
+            //usingDepth = true;
+            //maxDepth = 10;
+
+            //usingTime = true;
+            //maxTime = 5;
         }
 
         private static void BoardTest()
