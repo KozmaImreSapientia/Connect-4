@@ -17,10 +17,14 @@ namespace Connect_4
         static void Main(string[] args)
         {
             GetCommandLineArguments(args);
-            BoardTest();
+            //BoardTest();
 
         }
 
+        /// <summary>
+        /// Sets the control defining fields according to the given command line arguments, or to default test arguments
+        /// </summary>
+        /// <param name="args"> The command line arguments </param>
         private static void GetCommandLineArguments(string[] args)
         {
             for (int i = 0; i < args.Length; ++i)
@@ -33,6 +37,11 @@ namespace Connect_4
                         {
                             usingDepth = true;
                             maxDepth = Convert.ToInt32(args[i]);
+                            if(maxDepth < 1)
+                            {
+                                usingDepth = false;
+                                maxDepth = 0;
+                            }
                         }
                         break;
                     case "-t":
@@ -41,6 +50,11 @@ namespace Connect_4
                         {
                             usingTime = true;
                             maxTime = Convert.ToInt32(args[i]);
+                            if (maxTime < 1)
+                            {
+                                usingTime = false;
+                                maxTime = 0;
+                            }
                         }
                         break;
                         break;
