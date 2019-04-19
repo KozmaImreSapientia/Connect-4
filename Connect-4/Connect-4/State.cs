@@ -8,6 +8,9 @@ namespace Connect_4
 {
     class State
     {
+        /// <summary>
+        /// Enum containing the possible types of fields present on the board
+        /// </summary>
         public enum FIELD
         {
             EMPTY = 0,
@@ -21,6 +24,9 @@ namespace Connect_4
         private FIELD[,] board { get; set; }
         private List<State> children;
 
+        /// <summary>
+        /// Creates a new State with an empty board and without children
+        /// </summary>
         public State()
         {
             this.Board = new FIELD[HEIGHT, WIDTH];
@@ -28,22 +34,23 @@ namespace Connect_4
             this.Children = new List<State>();
         }
 
+        /// <summary>
+        /// Creates a new State with a given board and without children
+        /// </summary>
+        /// <param name="board"> The Field[,] board that correspunds to the state</param>
         public State(FIELD[,] board)
         {
             this.Board = board;
             this.Children = new List<State>();
         }
 
+        /// <summary>
+        /// Property for getting the list of children belonging to a state
+        /// </summary>
         public List<State> Children
         {
-            get
-            {
-                return this.children;
-            }
-            private set
-            {
-                this.children = value;
-            }
+            get { return this.children; }
+            private set { this.children = value; }
         }
 
         public FIELD[,] Board
@@ -57,11 +64,16 @@ namespace Connect_4
             Board[row, col] = value;
         }*/
 
+        /// <summary>
+        /// Method to check if a disc can be added to a column of the board
+        /// </summary>
+        /// <param name="col"> The column in which we want to add </param>
+        /// <returns> True if a disc can be added </returns>
         public bool CanAddToBoard(int col)
         {
             if (col < Board.GetLength(1))
             {
-                for (int i = Board.GetLength(0)-1; i >= 0; --i)
+                for (int i = Board.GetLength(0) - 1; i >= 0; --i)
                 {
                     if (Board[i, col] == FIELD.EMPTY)
                     {
@@ -72,12 +84,17 @@ namespace Connect_4
             return false;
         }
 
+        /// <summary>
+        /// Adds a disc to the specified column
+        /// </summary>
+        /// <param name="col"> The column where the disc will be added </param>
+        /// <param name="value"> The disc (FIELD) type that will be added </param>
         public void AddToBoard(int col, FIELD value)
         {
             Console.WriteLine(col);
             if (col < Board.GetLength(1))
             {
-                for (int i = Board.GetLength(0)-1; i >= 0; --i)
+                for (int i = Board.GetLength(0) - 1; i >= 0; --i)
                 {
                     if (Board[i, col] == FIELD.EMPTY)
                     {
@@ -86,15 +103,23 @@ namespace Connect_4
                     }
                 }
             }
+            else
+            {
+                throw new Exception("Column out of range");
+            }
         }
 
+        /// <summary>
+        /// Prints the current board
+        /// </summary>
         public void PrintBoard()
         {
-            for(int i = 0; i < Board.GetLength(0); ++i)
+            for (int i = 0; i < Board.GetLength(0); ++i)
             {
                 for (int j = 0; j < Board.GetLength(1); ++j)
                 {
-                    switch (Board[i,j]) {
+                    switch (Board[i, j])
+                    {
                         case FIELD.EMPTY:
                             Console.Write("_");
                             break;
