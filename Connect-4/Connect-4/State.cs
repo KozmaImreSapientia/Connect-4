@@ -91,7 +91,7 @@ namespace Connect_4
         /// <param name="value"> The disc (FIELD) type that will be added </param>
         public void AddToBoard(int col, FIELD value)
         {
-            Console.WriteLine(col);
+            Console.WriteLine($"Adding to column {col+1}");
             if (col < Board.GetLength(1))
             {
                 for (int i = Board.GetLength(0) - 1; i >= 0; --i)

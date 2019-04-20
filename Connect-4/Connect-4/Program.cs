@@ -18,7 +18,7 @@ namespace Connect_4
         {
             GetCommandLineArguments(args);
             //BoardTest();
-
+            BoardTest2();
         }
 
         /// <summary>
@@ -57,7 +57,6 @@ namespace Connect_4
                             }
                         }
                         break;
-                        break;
                     default:
                         break;
                 }
@@ -88,6 +87,23 @@ namespace Connect_4
                     i++;
                 }
                 state.AddToBoard(i % 7, State.FIELD.MIN);
+            }
+
+            state.PrintBoard();
+        }
+
+        private static void BoardTest2()
+        {
+            State state = new State();
+
+            for (int i = 0; i < 20; i++)
+            {
+                if (state.CanAddToBoard(2))
+                {
+                    state.AddToBoard(2, State.FIELD.MAX);
+                }
+                state.AddToBoard(0, State.FIELD.MIN);
+                state.PrintBoard();
             }
 
             state.PrintBoard();
