@@ -13,7 +13,7 @@ namespace Connect_4
 
         private static bool usingTime = false;
         private static int maxTime = -1; //seconds
-        private static int currentTurn = 1;
+        private static int player = 1;
 
         static void Main(string[] args)
         {
@@ -25,7 +25,7 @@ namespace Connect_4
             State state = new State();
             List<State> closedList = new List<State>();
             int maxDepth = 3;
-            int player = 1;
+           
 
             // AlphaBeta(state, closedList, Int32.MinValue, Int32.MaxValue, maxDepth, player);
             
@@ -155,9 +155,9 @@ namespace Connect_4
         {
             var minTurn=0;
             // TODO if max turn 
-            if (currentTurn ==1)
+            if (player ==1)
             {
-                 minTurn = 2;
+                 minTurn = -1;
                 RoundA(ref state);
                 
             }
@@ -170,21 +170,21 @@ namespace Connect_4
             }
             // ide meg jon  hogy leenorizze ha 4,3 ,2 re a maxnak es utana a min-nek utana meg return maxresult-minresult, persze itt vannaka sulyzok is hozza adva
             // computer turn
-            var max4 = checkForWin(state,currentTurn,4);
+            var max4 = checkForWin(state,player,4);
             if(max4 > 0)
             {
                 return 1000000;
             }
-            var max3 = checkForWin(state, currentTurn, 3);
-            var max2 = checkForWin(state, currentTurn, 2);
+            var max3 = checkForWin(state, player, 3);
+            var max2 = checkForWin(state, player, 2);
             // player turn
-            var min4 = checkForWin(state, currentTurn, 4);
+            var min4 = checkForWin(state, player, 4);
             if (min4 > 0)
             {
                 return -1000000;
             }
-            var min3 = checkForWin(state, currentTurn, 3);
-            var min2 = checkForWin(state, currentTurn, 2);
+            var min3 = checkForWin(state, player, 3);
+            var min2 = checkForWin(state, player, 2);
 
 
             return (max4*100 + max3*10 + max2 *5 )-(min4 * 100 + min3 * 10 + min2 * 5);
