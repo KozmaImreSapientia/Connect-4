@@ -20,6 +20,7 @@ namespace Connect_4
             //GetCommandLineArguments(args);
             //BoardTest();
             //BoardTest2();
+            //GameTest();
             State state = new State();
             List<State> closedList = new List<State>();
             int maxDepth = 3;
@@ -345,9 +346,26 @@ namespace Connect_4
             }
         }
 
+        /// <summary>
+        /// Decides is the game finished or not.
+        /// </summary>
+        /// <param name="state">Game state</param>
+        /// <returns></returns>
         private static bool IsTerminal(State state)
         {
+            State.FIELD f;
+            return IsTerminalWithWinner(state, out f);
+        }
 
+        /// <summary>
+        /// Decides is the game finished or not giving the winner.
+        /// If the game is not finished then winner == State.FEILD.EMPTY
+        /// </summary>
+        /// <param name="state"></param>
+        /// <param name="winner"></param>
+        /// <returns></returns>
+        private static bool IsTerminalWithWinner(State state, out State.FIELD winner)
+        {
             int tokencount = 0;
             // - tokencount = enemy's token count
             // + tokencount = our token count
@@ -357,7 +375,7 @@ namespace Connect_4
             // horizontal:
             for (int i = 0; i < state.Board.GetLength(0); ++i)
             {
-                tokencount = 0; 
+                tokencount = 0;
 
                 for (int j = 0; j < state.Board.GetLength(1); ++j)
                 {
@@ -370,11 +388,11 @@ namespace Connect_4
                     }
                 }
 
-                if (brk) { break; }            
+                if (brk) { break; }
             }
 
             // verical:
-            if ( ! brk )
+            if (!brk)
             {
                 for (int j = 0; j < state.Board.GetLength(1); ++j)
                 {
@@ -382,7 +400,7 @@ namespace Connect_4
 
                     for (int i = 0; i < state.Board.GetLength(0); ++i)
                     {
-                        incTokenCount( ref tokencount, state.Board[i, j] );
+                        incTokenCount(ref tokencount, state.Board[i, j]);
 
                         if (Math.Abs(tokencount) >= 4)
                         {
@@ -391,13 +409,66 @@ namespace Connect_4
                         }
                     }
 
-                if (brk) { break; }
+                    if (brk) { break; }
                 }
             }
 
             // main diagonal:
-            if ( ! brk )
+            if (!brk )
             {
+                // lower part    .\
+                bool isUsed = false;
+                for (int i = 0; i < state.Board.GetLength(0); ++i)
+                {
+                    int x = i;
+                    for (int j = 0; j < state.Board.GetLength(1); ++j)
+                    {
+                        tokencount = 0;
+                        int y = j;
+                        while (x < state.Board.GetLength(0) && y < state.Board.GetLength(1))
+                        {
+                            //Console.Write("[" + x + "," + y + "] ");
+                            ++x;
+                            ++y;
+                            isUsed = false;
+                        }
+                        if (!isUsed)
+                        {
+                            isUsed = true;
+                        }
+                    }
+                    //Console.WriteLine();
+                }
+                // lower part    \'
+                Console.WriteLine("*");
+                isUsed = false;
+                for (int k = 0; k < state.Board.GetLength(1); ++k)
+                {
+                    int x = 0;
+                    for (int j = k+1; j < state.Board.GetLength(1); ++j)
+                    {
+                        tokencount = 0;
+                        int y = j;
+                        while (x < state.Board.GetLength(0)-k && y < state.Board.GetLength(1))
+                        {
+                            //Console.Write("[" + x + "," + y + "] ");
+                            ++x;
+                            ++y;
+                            isUsed = false;
+                        }
+                        if (!isUsed)
+                        {
+                            isUsed = true;
+                        }
+                    }
+                    //Console.WriteLine();
+                }
+            }
+
+            // secondary diagonal
+            if (!brk)
+            {
+                // upper part    '/
                 bool isUsed = false;
                 for (int i = 0; i < state.Board.GetLength(0); ++i)
                 {
@@ -415,89 +486,53 @@ namespace Connect_4
                         }
                         if (!isUsed)
                         {
-                           
                             isUsed = true;
                         }
                     }
-                    Console.WriteLine();
+                    //Console.WriteLine();
                 }
-            }
-
-            /*if ( ! brk )
-            {
-                // upper part
-                for (int i=0; i< state.Board.GetLength(0); ++i)
+                // lower part    /.
+                Console.WriteLine("*");
+                isUsed = false;
+                for (int k = 1; k < state.Board.GetLength(1); ++k)
                 {
-                    tokencount = 0;
-
-                    for (int k=0; k<= i; ++k)
+                    int x = state.Board.GetLength(0) - 1;
+                    for (int j = k; j < state.Board.GetLength(1); ++j)
                     {
-                        if (k == 0)
-                        {
-                            Console.WriteLine("[" + i + "," + 0 + "]");
-                            incTokenCount(ref tokencount, state.Board[i, 0]);
+                        tokencount = 0;
+                        int y = j;
+                        while (x >= k-1 && y < state.Board.GetLength(1))
+                        {      
+                            //Console.Write("[" + x + "," + y + "] ");
+                            --x;
+                            ++y;
+                            isUsed = false;
                         }
-                        else
+                        if (!isUsed)
                         {
-                            Console.WriteLine("[" + (i - k) + "," + k + "]");
-                            incTokenCount(ref tokencount, state.Board[i - k, k]);
-                        }                     
-
-                        if (Math.Abs(tokencount) >= 4)
-                        {
-                            brk = true;
-                            break;
+                            isUsed = true;
                         }
                     }
-                    Console.WriteLine();
+                    //Console.WriteLine();
                 }
-
-                // lower part
-                int n = state.Board.GetLength(0);
-                int m = state.Board.GetLength(1);
-                for (int i = n-5; i < state.Board.GetLength(0); ++i)
-                {
-                    tokencount = 0;
-
-                    for (int k = 0; k <= i; ++k)
-                    {
-                        if (k == 0)
-                        {
-                            Console.WriteLine("[" + i + "," + 0 + "]");
-                            incTokenCount(ref tokencount, state.Board[i, 0]);
-                        }
-                        else
-                        {
-                            Console.WriteLine("[" + (i - k) + "," + k + "]");
-                            incTokenCount(ref tokencount, state.Board[i - k, k]);
-                        }
-
-                        if (Math.Abs(tokencount) >= 4)
-                        {
-                            brk = true;
-                            break;
-                        }
-                    }
-                    Console.WriteLine();
-                }
-                
             }
-
-            // secondary diagonal:
-            if ( ! brk )
-            {
-
-            }*/
 
             // result:
             if (Math.Abs(tokencount) >= 4)
             {
-                // return tokencount > 0 ? 1 : 0;
+                if(tokencount > 0)
+                {
+                    winner = State.FIELD.MAX;
+                }
+                else
+                {
+                    winner = State.FIELD.MIN;
+                }
                 return true;
             }
             else
             {
-                //return -1;
+                winner = State.FIELD.EMPTY;
                 return false;
             }
         }
@@ -561,10 +596,15 @@ namespace Connect_4
             return alpha;
         }
 
+        /// <summary>
+        /// Starts the game with user interactions.
+        /// </summary>
+        /// <param name="state">Game state</param>
         private static void StartTwoPlayerGame(ref State state) {
 
             bool play = true;
             int roundNumber = 0;
+            State.FIELD winner = State.FIELD.EMPTY;
 
             while (play)
             {
@@ -584,32 +624,46 @@ namespace Connect_4
                     RoundB(ref state);
                     
                 }
-
-                if( IsTerminal( state ))
+                
+                if( IsTerminalWithWinner( state, out winner) )
                 {
                     Console.Clear();
                     PrintStateWithHeader(state);
                     Console.WriteLine("Finished!");
+                    Console.WriteLine("   Winner: " + (winner==State.FIELD.MAX?"MAX":"MIN") );
                     play = false;
                 }
 
                 ++roundNumber;
             }
 
-        } 
+        }
 
+        /// <summary>
+        /// A's round.
+        /// </summary>
+        /// <param name="state">Game state</param>
         private static void RoundA(ref State state)
         {
             int colNum = GetUserInput(ref state);
             state.AddToBoard(colNum, State.FIELD.MAX);
         }
 
+        /// <summary>
+        /// B's round.
+        /// </summary>
+        /// <param name="state">Game state</param>
         private static void RoundB(ref State state)
         {
             int colNum = GetUserInput(ref state);
             state.AddToBoard(colNum, State.FIELD.MIN);
         }
 
+        /// <summary>
+        /// Reads the button pressed by the user, ONLY 1 press is allowed.
+        /// </summary>
+        /// <param name="state">Game state</param>
+        /// <returns></returns>
         private static int GetUserInput(ref State state)
         {
             bool validInput = false;
@@ -647,6 +701,10 @@ namespace Connect_4
             return colNum - 1;
         }
 
+        /// <summary>
+        /// Prints the board with header with the column numbers.
+        /// </summary>
+        /// <param name="state">Game state</param>
         private static void PrintStateWithHeader(State state)
         {
             for (int i = 1; i <= State.WIDTH; ++i)
