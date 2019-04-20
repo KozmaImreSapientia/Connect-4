@@ -17,9 +17,15 @@ namespace Connect_4
 
         static void Main(string[] args)
         {
-            GetCommandLineArguments(args);
+            //GetCommandLineArguments(args);
             //BoardTest();
-            BoardTest2();
+            //BoardTest2();
+            State state = new State();
+            List<State> closedList = new List<State>();
+            int maxDepth = 3;
+            int player = 1;
+
+            AlphaBeta(state, closedList, Int32.MinValue, Int32.MaxValue, maxDepth, player);
         }
 
         /// <summary>
@@ -69,6 +75,7 @@ namespace Connect_4
 
             //usingTime = true;
             //maxTime = 5;
+
         }
 
         private static void BoardTest()
@@ -93,6 +100,9 @@ namespace Connect_4
             state.PrintBoard();
         }
 
+
+        
+
         private static void BoardTest2()
         {
             State state = new State();
@@ -108,6 +118,21 @@ namespace Connect_4
             }
 
             state.PrintBoard();
+
+            State state2 = new State(State.CopyBoard(state.Board));
+            state2.AddToBoard(6,State.FIELD.MAX);
+            state2.PrintBoard();
+            state.PrintBoard();
+        }
+
+        private static void GameTest()
+        {
+            State.FIELD[,] board = new State.FIELD[State.HEIGHT, State.WIDTH];
+            State s = new State(board);
+
+            StartTwoPlayerGame(ref s);
+
+            Console.ReadLine();
         }
 
         private static int max(int alpha, int childValue)
@@ -383,7 +408,7 @@ namespace Connect_4
                         int y = j;
                         while (x >= 0 && y < state.Board.GetLength(1))
                         {
-                            Console.WriteLine("[" + x + "," + y + "]");
+                            //Console.WriteLine("[" + x + "," + y + "]");
                             --x;
                             ++y;
                             isUsed = false;
@@ -482,17 +507,17 @@ namespace Connect_4
         {
             for(int i=0; i < State.WIDTH; i++)
             {
-                State helper = new State(state.Board);
+                State helper = new State(State.CopyBoard(state.Board));
 
-                if (state.CanAddToBoard(i))
+                if (helper.CanAddToBoard(i))
                 {
                     if (player == 1)
                     {
-                        state.AddToBoard(i, State.FIELD.MAX);
+                        helper.AddToBoard(i, State.FIELD.MAX);
                     }
                     else
                     {
-                        state.AddToBoard(i, State.FIELD.MIN);
+                        helper.AddToBoard(i, State.FIELD.MIN);
                     }
                 }
 
@@ -501,6 +526,8 @@ namespace Connect_4
                 {
                     state.Children.Add(helper);
                 }
+
+                //PrintStateWithHeader(helper);
             }
 
         }
@@ -509,7 +536,7 @@ namespace Connect_4
          Player mens MIN (-1) or MAX (1) state.
 
          Initial calling: 
-         AlphaBeta(state, closedList, -inf, inf, maxdepth, player)
+         AlphaBeta(state, closedList, Int32.MinValue, Int32.MaxValue, maxdepth, player)
          */
         private static int AlphaBeta(State state, List<State> closedList, int alpha, int beta, int depth, int player)
         {
@@ -522,10 +549,9 @@ namespace Connect_4
 
             foreach (State child in state.Children)
             {
-                alpha = max(alpha, (-1) * AlphaBeta(state, closedList, alpha, beta, depth - 1, -player));
-                
-                //TODO: testing: before or after the recursion
                 closedList.Add(child);
+                alpha = max(alpha, (-1) * AlphaBeta(child, closedList, (-1) * beta, (-1) * alpha, depth - 1, -player));
+                //closedList.Add(child);
 
                 if (alpha >= beta)
                 {
@@ -625,7 +651,7 @@ namespace Connect_4
         {
             for (int i = 1; i <= State.WIDTH; ++i)
             {
-                Console.Write(i + " ");
+                Console.Write(i + "  ");
             }
             Console.WriteLine();
 
