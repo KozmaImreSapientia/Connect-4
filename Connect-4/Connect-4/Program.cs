@@ -14,6 +14,8 @@ namespace Connect_4
         private static bool usingTime = false;
         private static int maxTime = -1; //seconds
         private static int player = 1;
+        private static State state = new State();
+        private static List<State> closedList = new List<State>();
 
         static void Main(string[] args)
         {
@@ -21,14 +23,13 @@ namespace Connect_4
             //BoardTest();
             //BoardTest2();
             //GameTest();
-            
-            State state = new State();
-            List<State> closedList = new List<State>();
-            int maxDepth = 3;
-           
 
+            //State state = new State();
+            //List<State> closedList = new List<State>();
+            //int maxDepth = 3;
             // AlphaBeta(state, closedList, Int32.MinValue, Int32.MaxValue, maxDepth, player);
-            
+
+            maxDepth = 3;
             StartTwoPlayerGame(ref state);
         }
 
@@ -417,7 +418,7 @@ namespace Connect_4
             }
 
             // main diagonal:
-            if (!brk )
+            if (!brk)
             {
                 // lower part    .\
                 bool isUsed = false;
@@ -430,21 +431,31 @@ namespace Connect_4
                         int y = j;
                         while (x < state.Board.GetLength(0) && y < state.Board.GetLength(1))
                         {
-                            //Console.Write("[" + x + "," + y + "] ");
+                            //Console.Write("[" + x + "," + y + "]"+ tokencount + " ");
+                            incTokenCount(ref tokencount, state.Board[x, y]);
                             ++x;
                             ++y;
                             isUsed = false;
+                            if (Math.Abs(tokencount) >= 4)
+                            {
+                                brk = true;
+                                break;
+                            }
                         }
+                        if (brk) { break; }
                         if (!isUsed)
                         {
                             isUsed = true;
                         }
                     }
                     //Console.WriteLine();
+                    if (brk) { break; }
                 }
-                // lower part    \'
-                Console.WriteLine("*");
-                isUsed = false;
+            }
+            if (!brk)
+            {
+                // upper part    \'
+                bool isUsed = false;
                 for (int k = 0; k < state.Board.GetLength(1); ++k)
                 {
                     int x = 0;
@@ -455,16 +466,24 @@ namespace Connect_4
                         while (x < state.Board.GetLength(0)-k && y < state.Board.GetLength(1))
                         {
                             //Console.Write("[" + x + "," + y + "] ");
+                            incTokenCount(ref tokencount, state.Board[x, y]);
                             ++x;
                             ++y;
                             isUsed = false;
+                            if (Math.Abs(tokencount) >= 4)
+                            {
+                                brk = true;
+                                break;
+                            }
                         }
                         if (!isUsed)
                         {
                             isUsed = true;
                         }
+                        if (brk) { break; }
                     }
                     //Console.WriteLine();
+                    if (brk) { break; }
                 }
             }
 
@@ -482,21 +501,31 @@ namespace Connect_4
                         int y = j;
                         while (x >= 0 && y < state.Board.GetLength(1))
                         {
-                            //Console.WriteLine("[" + x + "," + y + "]");
+                            //Console.Write("[" + x + "," + y + "] ");
+                            incTokenCount(ref tokencount, state.Board[x, y]);
                             --x;
                             ++y;
                             isUsed = false;
+                            if (Math.Abs(tokencount) >= 4)
+                            {
+                                brk = true;
+                                break;
+                            }
                         }
                         if (!isUsed)
                         {
                             isUsed = true;
                         }
+                        if (brk) { break; }
                     }
                     //Console.WriteLine();
+                    if (brk) { break; }
                 }
+            }
+            if (!brk)
+            {
                 // lower part    /.
-                Console.WriteLine("*");
-                isUsed = false;
+                bool isUsed = false;
                 for (int k = 1; k < state.Board.GetLength(1); ++k)
                 {
                     int x = state.Board.GetLength(0) - 1;
@@ -510,13 +539,20 @@ namespace Connect_4
                             --x;
                             ++y;
                             isUsed = false;
+                            if (Math.Abs(tokencount) >= 4)
+                            {
+                                brk = true;
+                                break;
+                            }
                         }
                         if (!isUsed)
                         {
                             isUsed = true;
                         }
+                        if (brk) { break; }
                     }
                     //Console.WriteLine();
+                    if (brk) { break; }
                 }
             }
 
@@ -633,7 +669,8 @@ namespace Connect_4
                     Console.Clear();
                     PrintStateWithHeader(state);
                     Console.WriteLine("Finished!");
-                    Console.WriteLine("   Winner: " + (winner==State.FIELD.MAX?"MAX":"MIN") );
+                    Console.WriteLine("   Winner: " + (winner==State.FIELD.MAX?"Player A  = X (MAX)":"Player B  = O (MIN)") );
+                    Console.ReadLine();
                     play = false;
                 }
 
@@ -658,12 +695,14 @@ namespace Connect_4
         /// <param name="state">Game state</param>
         private static void RoundB(ref State state)
         {
-            //int colNum = GetUserInput(ref state);
-            //state.AddToBoard(colNum, State.FIELD.MIN);
-            List<State> closedList = new List<State>();
-            int maxDepth = 3;
-            int player = 1;
+            int colNum = GetUserInput(ref state);
+            state.AddToBoard(colNum, State.FIELD.MIN);
+
+            /*
+                   TIMI
+             
             int colNum = AlphaBeta(state, closedList, Int32.MinValue, Int32.MaxValue, maxDepth, player);
+            */
         }
 
         /// <summary>
