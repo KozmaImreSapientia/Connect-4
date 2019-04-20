@@ -19,6 +19,7 @@ namespace Connect_4
             //GetCommandLineArguments(args);
             //BoardTest();
             //BoardTest2();
+            //GameTest();
             State state = new State();
             List<State> closedList = new List<State>();
             int maxDepth = 3;
@@ -446,7 +447,7 @@ namespace Connect_4
 
             while (play)
             {
-                //Console.Clear();
+                Console.Clear();
 
 
                 PrintStateWithHeader(state);
@@ -465,7 +466,7 @@ namespace Connect_4
                 
                 if( IsTerminalWithWinner( state, out winner) )
                 {
-                    //Console.Clear();
+                    Console.Clear();
                     PrintStateWithHeader(state);
                     Console.WriteLine("Finished!");
                     Console.WriteLine("   Winner: " + (winner==State.FIELD.MAX?"MAX":"MIN") );
