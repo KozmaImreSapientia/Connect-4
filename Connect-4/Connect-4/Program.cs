@@ -19,6 +19,13 @@ namespace Connect_4
             GetCommandLineArguments(args);
             //BoardTest();
             BoardTest2();
+            /*State state = new State();
+            List<State> closedList = new List<State>();
+            int maxDepth = 3;
+            int player = 1;
+
+            AlphaBeta(state, closedList, Int32.MinValue, Int32.MaxValue, maxDepth, player);
+            PrintStateWithHeader(state);*/
         }
 
         /// <summary>
@@ -323,15 +330,15 @@ namespace Connect_4
             {
                 State helper = new State(state.Board);
 
-                if (state.CanAddToBoard(i))
+                if (helper.CanAddToBoard(i))
                 {
                     if (player == 1)
                     {
-                        state.AddToBoard(i, State.FIELD.MAX);
+                        helper.AddToBoard(i, State.FIELD.MAX);
                     }
                     else
                     {
-                        state.AddToBoard(i, State.FIELD.MIN);
+                        helper.AddToBoard(i, State.FIELD.MIN);
                     }
                 }
 
@@ -340,6 +347,8 @@ namespace Connect_4
                 {
                     state.Children.Add(helper);
                 }
+
+                PrintStateWithHeader(helper);
             }
 
         }
