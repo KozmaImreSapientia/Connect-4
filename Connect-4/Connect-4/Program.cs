@@ -16,16 +16,15 @@ namespace Connect_4
 
         static void Main(string[] args)
         {
-            GetCommandLineArguments(args);
+            //GetCommandLineArguments(args);
             //BoardTest();
-            BoardTest2();
-            /*State state = new State();
+            //BoardTest2();
+            State state = new State();
             List<State> closedList = new List<State>();
             int maxDepth = 3;
             int player = 1;
 
             AlphaBeta(state, closedList, Int32.MinValue, Int32.MaxValue, maxDepth, player);
-            PrintStateWithHeader(state);*/
         }
 
         /// <summary>
@@ -234,7 +233,7 @@ namespace Connect_4
                         int y = j;
                         while (x >= 0 && y < state.Board.GetLength(1))
                         {
-                            Console.WriteLine("[" + x + "," + y + "]");
+                            //Console.WriteLine("[" + x + "," + y + "]");
                             --x;
                             ++y;
                             isUsed = false;
@@ -333,7 +332,7 @@ namespace Connect_4
         {
             for(int i=0; i < State.WIDTH; i++)
             {
-                State helper = new State(state.Board);
+                State helper = new State(State.CopyBoard(state.Board));
 
                 if (helper.CanAddToBoard(i))
                 {
@@ -362,7 +361,7 @@ namespace Connect_4
          Player mens MIN (-1) or MAX (1) state.
 
          Initial calling: 
-         AlphaBeta(state, closedList, -inf, inf, maxdepth, player)
+         AlphaBeta(state, closedList, Int32.MinValue, Int32.MaxValue, maxdepth, player)
          */
         private static int AlphaBeta(State state, List<State> closedList, int alpha, int beta, int depth, int player)
         {
@@ -375,10 +374,9 @@ namespace Connect_4
 
             foreach (State child in state.Children)
             {
-                alpha = max(alpha, (-1) * AlphaBeta(state, closedList, alpha, beta, depth - 1, -player));
-                
-                //TODO: testing: before or after the recursion
                 closedList.Add(child);
+                alpha = max(alpha, (-1) * AlphaBeta(child, closedList, (-1) * beta, (-1) * alpha, depth - 1, -player));
+                //closedList.Add(child);
 
                 if (alpha >= beta)
                 {
@@ -478,7 +476,7 @@ namespace Connect_4
         {
             for (int i = 1; i <= State.WIDTH; ++i)
             {
-                Console.Write(i + " ");
+                Console.Write(i + "  ");
             }
             Console.WriteLine();
 
