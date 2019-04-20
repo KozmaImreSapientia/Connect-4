@@ -114,6 +114,11 @@ namespace Connect_4
             }
 
             state.PrintBoard();
+
+            State state2 = new State(State.CopyBoard(state.Board));
+            state2.AddToBoard(6,State.FIELD.MAX);
+            state2.PrintBoard();
+            state.PrintBoard();
         }
 
         private static int max(int alpha, int childValue)
@@ -348,7 +353,7 @@ namespace Connect_4
                     state.Children.Add(helper);
                 }
 
-                PrintStateWithHeader(helper);
+                //PrintStateWithHeader(helper);
             }
 
         }

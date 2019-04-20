@@ -59,10 +59,20 @@ namespace Connect_4
             set { this.board = value; }
         }
 
-        /*public void SetBoardValue(int row, int col, FIELD value)
+        public static FIELD[,] CopyBoard(FIELD[,] input)
         {
-            Board[row, col] = value;
-        }*/
+            FIELD[,] copy = new FIELD[input.GetLength(0), input.GetLength(1)];
+
+            for (int i = 0; i < input.GetLength(0); i++)
+            {
+                for (int j = 0; j < input.GetLength(1); j++)
+                {
+                    copy[i, j] = input[i, j];
+                }
+            }
+
+            return copy;
+        }
 
         /// <summary>
         /// Method to check if a disc can be added to a column of the board
