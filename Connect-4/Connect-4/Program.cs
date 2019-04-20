@@ -12,13 +12,14 @@ namespace Connect_4
         private static int maxDepth = -1;
 
         private static bool usingTime = false;
-        private static int maxTime = -1; //seconds
+        private static int maxTime = -1;
 
         static void Main(string[] args)
         {
             GetCommandLineArguments(args);
             //BoardTest();
             BoardTest2();
+            //GameTest();
         }
 
         /// <summary>
@@ -68,6 +69,7 @@ namespace Connect_4
 
             //usingTime = true;
             //maxTime = 5;
+
         }
 
         private static void BoardTest()
@@ -92,6 +94,9 @@ namespace Connect_4
             state.PrintBoard();
         }
 
+
+        
+
         private static void BoardTest2()
         {
             State state = new State();
@@ -107,6 +112,16 @@ namespace Connect_4
             }
 
             state.PrintBoard();
+        }
+
+        private static void GameTest()
+        {
+            State.FIELD[,] board = new State.FIELD[State.HEIGHT, State.WIDTH];
+            State s = new State(board);
+
+            StartTwoPlayerGame(ref s);
+
+            Console.ReadLine();
         }
 
         private static int max(int alpha, int childValue)
