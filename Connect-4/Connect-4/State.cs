@@ -121,13 +121,13 @@ namespace Connect_4
                     switch (Board[i, j])
                     {
                         case FIELD.EMPTY:
-                            Console.Write("_");
+                            Console.Write("- ");
                             break;
                         case FIELD.MIN:
-                            Console.Write("O");
+                            Console.Write("O ");
                             break;
                         case FIELD.MAX:
-                            Console.Write("X");
+                            Console.Write("X ");
                             break;
                         default:
                             break;
