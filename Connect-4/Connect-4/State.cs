@@ -14,8 +14,8 @@ namespace Connect_4
         public enum FIELD
         {
             EMPTY = 0,
-            MIN = 1,
-            MAX = 2
+            MIN = 1, //human
+            MAX = 2  //computer
         }
 
         public static readonly int WIDTH = 7;
@@ -91,7 +91,7 @@ namespace Connect_4
         /// <param name="value"> The disc (FIELD) type that will be added </param>
         public void AddToBoard(int col, FIELD value)
         {
-            Console.WriteLine(col);
+            Console.WriteLine($"Adding to column {col+1}");
             if (col < Board.GetLength(1))
             {
                 for (int i = Board.GetLength(0) - 1; i >= 0; --i)
@@ -132,6 +132,7 @@ namespace Connect_4
                         default:
                             break;
                     }
+                    Console.Write(" ");
                 }
                 Console.WriteLine();
             }

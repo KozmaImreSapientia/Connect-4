@@ -8,11 +8,66 @@ namespace Connect_4
 {
     public class Program
     {
+        private static bool usingDepth = false;
+        private static int maxDepth = -1;
+
+        private static bool usingTime = false;
+        private static int maxTime = -1; //seconds
 
         static void Main(string[] args)
         {
+            GetCommandLineArguments(args);
             //BoardTest();
-            GameTest();
+            BoardTest2();
+        }
+
+        /// <summary>
+        /// Sets the control defining fields according to the given command line arguments, or to default test arguments
+        /// </summary>
+        /// <param name="args"> The command line arguments </param>
+        private static void GetCommandLineArguments(string[] args)
+        {
+            for (int i = 0; i < args.Length; ++i)
+            {
+                switch (args[i])
+                {
+                    case "-d":
+                        i++;
+                        if (i < args.Length)
+                        {
+                            usingDepth = true;
+                            maxDepth = Convert.ToInt32(args[i]);
+                            if(maxDepth < 1)
+                            {
+                                usingDepth = false;
+                                maxDepth = 0;
+                            }
+                        }
+                        break;
+                    case "-t":
+                        i++;
+                        if (i < args.Length)
+                        {
+                            usingTime = true;
+                            maxTime = Convert.ToInt32(args[i]);
+                            if (maxTime < 1)
+                            {
+                                usingTime = false;
+                                maxTime = 0;
+                            }
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            }
+
+            //default args for testing
+            //usingDepth = true;
+            //maxDepth = 10;
+
+            //usingTime = true;
+            //maxTime = 5;
         }
 
         private static void BoardTest()
@@ -37,14 +92,21 @@ namespace Connect_4
             state.PrintBoard();
         }
 
-        private static void GameTest()
+        private static void BoardTest2()
         {
-            State.FIELD[,] board = new State.FIELD[State.HEIGHT, State.WIDTH];
-            State s = new State(board);
+            State state = new State();
 
-            StartTwoPlayerGame(ref s);
+            for (int i = 0; i < 20; i++)
+            {
+                if (state.CanAddToBoard(2))
+                {
+                    state.AddToBoard(2, State.FIELD.MAX);
+                }
+                state.AddToBoard(0, State.FIELD.MIN);
+                state.PrintBoard();
+            }
 
-            Console.ReadLine();
+            state.PrintBoard();
         }
 
         private static int max(int alpha, int childValue)
