@@ -21,12 +21,15 @@ namespace Connect_4
             //BoardTest();
             //BoardTest2();
             //GameTest();
+            
             State state = new State();
             List<State> closedList = new List<State>();
             int maxDepth = 3;
             int player = 1;
 
-            AlphaBeta(state, closedList, Int32.MinValue, Int32.MaxValue, maxDepth, player);
+            // AlphaBeta(state, closedList, Int32.MinValue, Int32.MaxValue, maxDepth, player);
+            
+            StartTwoPlayerGame(ref state);
         }
 
         /// <summary>
@@ -622,7 +625,7 @@ namespace Connect_4
                 {
                     Console.Write("> Player 2 (O) (B-MIN): ");
                     RoundB(ref state);
-                    
+
                 }
                 
                 if( IsTerminalWithWinner( state, out winner) )
@@ -655,8 +658,12 @@ namespace Connect_4
         /// <param name="state">Game state</param>
         private static void RoundB(ref State state)
         {
-            int colNum = GetUserInput(ref state);
-            state.AddToBoard(colNum, State.FIELD.MIN);
+            //int colNum = GetUserInput(ref state);
+            //state.AddToBoard(colNum, State.FIELD.MIN);
+            List<State> closedList = new List<State>();
+            int maxDepth = 3;
+            int player = 1;
+            int colNum = AlphaBeta(state, closedList, Int32.MinValue, Int32.MaxValue, maxDepth, player);
         }
 
         /// <summary>
