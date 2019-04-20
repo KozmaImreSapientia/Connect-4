@@ -57,7 +57,6 @@ namespace Connect_4
                             }
                         }
                         break;
-                        break;
                     default:
                         break;
                 }
@@ -115,7 +114,8 @@ namespace Connect_4
             return false;
         }
 
-        private static void CreateChildrenList(State state, List<State> clodesList, int color)
+        /*from a given position creating a list ofevery possible steps in the next round.*/
+        private static void CreateChildrenList(State state, List<State> clodesList, int player)
         {
             for(int i=0; i < State.WIDTH; i++)
             {
@@ -123,7 +123,7 @@ namespace Connect_4
 
                 if (state.CanAddToBoard(i))
                 {
-                    if (color == 1)
+                    if (player == 1)
                     {
                         state.AddToBoard(i, State.FIELD.MAX);
                     }
@@ -142,18 +142,24 @@ namespace Connect_4
 
         }
 
-        private static int AlphaBeta(State state, List<State> closedList, int alpha, int beta, int depth, int color)
+        /*The apha - beta search to a specific depth.
+         Player mens MIN (-1) or MAX (1) state.
+
+         Initial calling: 
+         AlphaBeta(state, closedList, -inf, inf, maxdepth, player)
+         */
+        private static int AlphaBeta(State state, List<State> closedList, int alpha, int beta, int depth, int player)
         {
             if (IsTerminal(state) || depth == 0)
             {
-                return color * HeuristicEval(state);
+                return player * HeuristicEval(state);
             }
 
-            CreateChildrenList(state, closedList, color);
+            CreateChildrenList(state, closedList, player);
 
             foreach (State child in state.Children)
             {
-                alpha = max(alpha, (-1) * AlphaBeta(state, closedList, alpha, beta, depth - 1, -color));
+                alpha = max(alpha, (-1) * AlphaBeta(state, closedList, alpha, beta, depth - 1, -player));
                 
                 //TODO: testing: before or after the recursion
                 closedList.Add(child);
