@@ -23,7 +23,11 @@ namespace Connect_4
 
         private FIELD[,] board { get; set; }
         private List<State> children;
-        private int alphaBetaValue;
+
+        /// <summary>
+        /// Field for storing the alpha-beta value corresponding to this State 
+        /// </summary>
+        public int AlphaBetaValue { get; set; }
 
         /// <summary>
         /// Creates a new State with an empty board and without children
@@ -57,15 +61,6 @@ namespace Connect_4
             {
                 this.Children.Add(item);
             }
-        }
-
-        /// <summary>
-        /// Property for getting and setting the alpha-beta value corresponding to this State 
-        /// </summary>
-        public int AlphaBetaValue
-        {
-            get { return alphaBetaValue; }
-            set { alphaBetaValue = value; }
         }
 
         /// <summary>
