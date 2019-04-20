@@ -10,12 +10,12 @@ namespace Connect_4
     {
         private static bool usingDepth = false;
         private static int maxDepth = -1;
-
+        
         private static bool usingTime = false;
         private static int maxTime = -1; //seconds
         private static int player = 1;
-        private static State state = new State();
-        private static List<State> closedList = new List<State>();
+        //private static State state = new State();
+        //private static List<State> closedList = new List<State>();
 
         static void Main(string[] args)
         {
@@ -24,13 +24,11 @@ namespace Connect_4
             //BoardTest2();
             //GameTest();
 
-            //State state = new State();
-            //List<State> closedList = new List<State>();
-            //int maxDepth = 3;
-            // AlphaBeta(state, closedList, Int32.MinValue, Int32.MaxValue, maxDepth, player);
+            
 
-            maxDepth = 3;
-            StartTwoPlayerGame(ref state);
+            
+            //maxDepth = 3;
+            StartTwoPlayerGame();
         }
 
         /// <summary>
@@ -132,7 +130,7 @@ namespace Connect_4
             State.FIELD[,] board = new State.FIELD[State.HEIGHT, State.WIDTH];
             State s = new State(board);
 
-            StartTwoPlayerGame(ref s);
+            StartTwoPlayerGame();//ref s);
 
             Console.ReadLine();
         }
@@ -153,19 +151,19 @@ namespace Connect_4
         {
             var minTurn=0;
             // TODO if max turn 
-            if (player ==1)
-            {
-                 minTurn = -1;
-                RoundA(ref state);
+            //if (player ==1)
+            //{
+            //    minTurn = -1;
+            //    RoundA(ref state);
                 
-            }
-            //TODO if min turn
-            else
-            {
-                minTurn = 1;
-                RoundB(ref state);
+            //}
+            ////TODO if min turn
+            //else
+            //{
+            //    minTurn = 1;
+            //    RoundB(ref state);
 
-            }
+            //}
             // ide meg jon  hogy leenorizze ha 4,3 ,2 re a maxnak es utana a min-nek utana meg return maxresult-minresult, persze itt vannaka sulyzok is hozza adva
             // computer turn
             var max4 = checkForWin(state,player,4);
@@ -636,34 +634,38 @@ namespace Connect_4
         /// Starts the game with user interactions.
         /// </summary>
         /// <param name="state">Game state</param>
-        private static void StartTwoPlayerGame(ref State state) {
+        private static void StartTwoPlayerGame() {//ref State state) {
 
             bool play = true;
             int roundNumber = 0;
             State.FIELD winner = State.FIELD.EMPTY;
 
+            State state = new State();
+            List<State> closedList = new List<State>();
+            int depth = 3;
+            int player = 1;
+
             while (play)
             {
-                Console.Clear();
+                //Console.Clear();
 
 
                 PrintStateWithHeader(state);
 
-                if ( roundNumber % 2 == 0)
+                if ( roundNumber % 2 != 0)
                 {
-                    Console.Write("> Player 1 (X) (A-MAX): ");
-                    RoundA(ref state);
+                    Console.Write("> Player (O) (B-MIN): ");
+                    RoundB(ref state);
                 }
                 else
                 {
-                    Console.Write("> Player 2 (O) (B-MIN): ");
-                    RoundB(ref state);
-
+                    Console.Write("> PC (X) (A-MAX)...\n");
+                    RoundA(ref state, closedList, depth);
                 }
                 
                 if( IsTerminalWithWinner( state, out winner) )
                 {
-                    Console.Clear();
+                    //Console.Clear();
                     PrintStateWithHeader(state);
                     Console.WriteLine("Finished!");
                     Console.WriteLine("   Winner: " + (winner==State.FIELD.MAX?"Player A  = X (MAX)":"Player B  = O (MIN)") );
@@ -680,10 +682,34 @@ namespace Connect_4
         /// A's round.
         /// </summary>
         /// <param name="state">Game state</param>
-        private static void RoundA(ref State state)
+        private static void RoundA(ref State state, List<State> closedList, int depth)
         {
-            int colNum = GetUserInput(ref state);
-            state.AddToBoard(colNum, State.FIELD.MAX);
+            //int colNum = GetUserInput(ref state);
+            //state.AddToBoard(colNum, State.FIELD.MAX);
+
+            /*int score = AlphaBeta(state, closedList, Int32.MinValue, Int32.MaxValue, 3, 1);
+
+            Console.WriteLine("--------------");
+            PrintStateWithHeader(state);
+            Console.WriteLine(score + "\n");*/
+            
+
+            //state.AddToBoard(3, State.FIELD.MIN);
+            int score = AlphaBeta(state, closedList, Int32.MinValue, Int32.MaxValue, depth, player);
+
+            foreach (State child in state.Children)
+            {
+                //TODO find how to use the value of the alfa-beta search
+                if (HeuristicEval(child) == score)
+                {
+                    //TODO state <- child
+                    //state.Board = State.CopyBoard(child.Board);
+                    
+                    //PrintStateWithHeader(state);
+                    break;
+                }
+            }
+
         }
 
         /// <summary>
@@ -694,12 +720,6 @@ namespace Connect_4
         {
             int colNum = GetUserInput(ref state);
             state.AddToBoard(colNum, State.FIELD.MIN);
-
-            /*
-                   TIMI
-             
-            int colNum = AlphaBeta(state, closedList, Int32.MinValue, Int32.MaxValue, maxDepth, player);
-            */
         }
 
         /// <summary>
