@@ -112,6 +112,11 @@ namespace Connect_4
             }
 
             state.PrintBoard();
+
+            State state2 = new State(State.CopyBoard(state.Board));
+            state2.AddToBoard(6,State.FIELD.MAX);
+            state2.PrintBoard();
+            state.PrintBoard();
         }
 
         private static void GameTest()
@@ -331,21 +336,22 @@ namespace Connect_4
             }
         }
 
-        private static void CreateChildrenList(State state, List<State> clodesList, int color)
+        /*from a given position creating a list ofevery possible steps in the next round.*/
+        private static void CreateChildrenList(State state, List<State> clodesList, int player)
         {
             for(int i=0; i < State.WIDTH; i++)
             {
                 State helper = new State(state.Board);
 
-                if (state.CanAddToBoard(i))
+                if (helper.CanAddToBoard(i))
                 {
-                    if (color == 1)
+                    if (player == 1)
                     {
-                        state.AddToBoard(i, State.FIELD.MAX);
+                        helper.AddToBoard(i, State.FIELD.MAX);
                     }
                     else
                     {
-                        state.AddToBoard(i, State.FIELD.MIN);
+                        helper.AddToBoard(i, State.FIELD.MIN);
                     }
                 }
 
@@ -354,22 +360,30 @@ namespace Connect_4
                 {
                     state.Children.Add(helper);
                 }
+
+                //PrintStateWithHeader(helper);
             }
 
         }
 
-        private static int AlphaBeta(State state, List<State> closedList, int alpha, int beta, int depth, int color)
+        /*The apha - beta search to a specific depth.
+         Player mens MIN (-1) or MAX (1) state.
+
+         Initial calling: 
+         AlphaBeta(state, closedList, -inf, inf, maxdepth, player)
+         */
+        private static int AlphaBeta(State state, List<State> closedList, int alpha, int beta, int depth, int player)
         {
             if (IsTerminal(state) || depth == 0)
             {
-                return color * HeuristicEval(state);
+                return player * HeuristicEval(state);
             }
 
-            CreateChildrenList(state, closedList, color);
+            CreateChildrenList(state, closedList, player);
 
             foreach (State child in state.Children)
             {
-                alpha = max(alpha, (-1) * AlphaBeta(state, closedList, alpha, beta, depth - 1, -color));
+                alpha = max(alpha, (-1) * AlphaBeta(state, closedList, alpha, beta, depth - 1, -player));
                 
                 //TODO: testing: before or after the recursion
                 closedList.Add(child);
