@@ -13,6 +13,7 @@ namespace Connect_4
 
         private static bool usingTime = false;
         private static int maxTime = -1; //seconds
+        private static int currentTurn = 1;
 
         static void Main(string[] args)
         {
@@ -120,10 +121,170 @@ namespace Connect_4
                 return childValue;
             }
         }
-
+        // get the current board
         private static int HeuristicEval(State state)
         {
-            return 0;
+            var minTurn=0;
+            // TODO if max turn 
+            if (currentTurn ==1)
+            {
+                 minTurn = 2;
+                RoundA(ref state);
+                
+            }
+            //TODO if min turn
+            else
+            {
+                minTurn = 1;
+                RoundB(ref state);
+
+            }
+            // ide meg jon  hogy leenorizze ha 4,3 ,2 re a maxnak es utana a min-nek utana meg return maxresult-minresult, persze itt vannaka sulyzok is hozza adva
+            // computer turn
+            var max4 = checkForWin(state,currentTurn,4);
+            if(max4 > 0)
+            {
+                return 1000000;
+            }
+            var max3 = checkForWin(state, currentTurn, 3);
+            var max2 = checkForWin(state, currentTurn, 2);
+            // player turn
+            var min4 = checkForWin(state, currentTurn, 4);
+            if (min4 > 0)
+            {
+                return -1000000;
+            }
+            var min3 = checkForWin(state, currentTurn, 3);
+            var min2 = checkForWin(state, currentTurn, 2);
+
+
+            return (max4*100 + max3*10 + max2 *5 )-(min4 * 100 + min3 * 10 + min2 * 5);
+        }
+
+        private static int checkForWin(State state, int currentTurn, int positionsOnPlace)
+        {
+            var count = 0;
+            // height
+            for(int i=0;i< 6; i++)
+            {
+                // width
+                for(int j = 0; j < 7; j++)
+                {
+                    if (state.Board[i,j].Equals( currentTurn))
+                    {
+                        count += verticalPositions(i, j, state, positionsOnPlace);
+                        count += horizontalPositions(i, j, state, positionsOnPlace);
+                        count += diagonalPositions(i, j, state, positionsOnPlace);
+                    }
+                }
+
+            }
+            return count;
+        }
+
+        private static int diagonalPositions(int row, int col, State state, int positionsOnPlace)
+        {
+            var consecutiveCount = 0;
+            var totalCount = 0;
+            //! check for diagonals ith positive slope
+            var j = col;
+            for (int i = 0; i < row; i++)
+            {
+                if (j > 6) break;
+
+                else if (state.Board[i, j] == state.Board[row, col])
+                {
+                    consecutiveCount += 1;
+                }
+                else
+                {
+                    break;
+                }
+                // increment when row is incremented
+                j += 1;
+
+            }
+
+            if (consecutiveCount >= positionsOnPlace)
+            {
+                totalCount+= 1;
+            }
+            //! check for diagonals with negative slope
+            consecutiveCount = 0;
+            j = col;
+            for (int i = row; i < 0; i--)
+            {
+                if (j > 6) break;
+
+                else if (state.Board[i, j] == state.Board[row, col])
+                {
+                    consecutiveCount += 1;
+                }
+                else
+                {
+                    break;
+                }
+                // increment when row is incremented
+                j += 1;
+
+            }
+            if (consecutiveCount >= positionsOnPlace)
+            {
+                totalCount += 1;
+            }
+            return totalCount;
+        }
+
+        private static int horizontalPositions(int row, int col, State state, int positionsOnPlace)
+        {
+            var consecutiveCount = 0;
+            for (int i = 0; i < col; i++)
+            {
+                if (state.Board[row, i] == state.Board[row, col])
+                {
+                    consecutiveCount += 1;
+                }
+                else
+                {
+                    break;
+                }
+
+            }
+
+            if (consecutiveCount >= positionsOnPlace)
+            {
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        private static int verticalPositions(int row, int col, State state, int positionsOnPlace)
+        {
+           var  consecutiveCount = 0;
+            for(int i = 0; i < row; i++)
+            {
+                if (state.Board[i,col] == state.Board[row,col])
+                {
+                    consecutiveCount += 1;
+                }
+                else
+                {
+                    break;
+                }
+
+            }
+
+            if(consecutiveCount>= positionsOnPlace)
+            {
+                return 1;
+            }
+            else
+            {
+                return 0;
+            }
         }
 
         private static void incTokenCount(ref int tokencount, State.FIELD field)
