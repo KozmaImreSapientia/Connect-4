@@ -643,7 +643,7 @@ namespace Connect_4
             State state = new State();
             List<State> closedList = new List<State>();
             int depth = 3;
-            int player = 1;
+            //int player = 1;
 
             while (play)
             {
@@ -684,17 +684,7 @@ namespace Connect_4
         /// <param name="state">Game state</param>
         private static void RoundA(ref State state, List<State> closedList, int depth)
         {
-            //int colNum = GetUserInput(ref state);
-            //state.AddToBoard(colNum, State.FIELD.MAX);
-
-            /*int score = AlphaBeta(state, closedList, Int32.MinValue, Int32.MaxValue, 3, 1);
-
-            Console.WriteLine("--------------");
-            PrintStateWithHeader(state);
-            Console.WriteLine(score + "\n");*/
             
-
-            //state.AddToBoard(3, State.FIELD.MIN);
             int score = AlphaBeta(state, closedList, Int32.MinValue, Int32.MaxValue, depth, player);
 
             foreach (State child in state.Children)
@@ -702,9 +692,7 @@ namespace Connect_4
                 //TODO find how to use the value of the alfa-beta search
                 if (HeuristicEval(child) == score)
                 {
-                    //TODO state <- child
-                    //state.Board = State.CopyBoard(child.Board);
-                    
+                    state = child;
                     //PrintStateWithHeader(state);
                     break;
                 }
