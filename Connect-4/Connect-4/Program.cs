@@ -105,9 +105,6 @@ namespace Connect_4
             state.PrintBoard();
         }
 
-
-        
-
         private static void BoardTest2()
         {
             State state = new State();

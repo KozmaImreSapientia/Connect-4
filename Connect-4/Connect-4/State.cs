@@ -45,6 +45,20 @@ namespace Connect_4
         }
 
         /// <summary>
+        /// Copy constructor
+        /// </summary>
+        /// <param name="input"> The State object that has to be copied </param>
+        public State(State input)
+        {
+            this.Board = State.CopyBoard(input.Board);
+            this.Children = new List<State>();
+            foreach (var item in input.Children)
+            {
+                this.Children.Add(item);
+            }
+        }
+
+        /// <summary>
         /// Property for getting the list of children belonging to a state
         /// </summary>
         public List<State> Children
@@ -53,12 +67,20 @@ namespace Connect_4
             private set { this.children = value; }
         }
 
+        /// <summary>
+        /// Property for getting and setting the board belonging to a state
+        /// </summary>
         public FIELD[,] Board
         {
             get { return this.board; }
             set { this.board = value; }
         }
 
+        /// <summary>
+        /// Static method that returns a copy of the board given as parameter
+        /// </summary>
+        /// <param name="input"> The board that has to  be copied </param>
+        /// <returns> The copy of the input </returns>
         public static FIELD[,] CopyBoard(FIELD[,] input)
         {
             FIELD[,] copy = new FIELD[input.GetLength(0), input.GetLength(1)];
