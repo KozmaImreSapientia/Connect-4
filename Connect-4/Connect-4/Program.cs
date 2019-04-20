@@ -18,7 +18,7 @@ namespace Connect_4
         {
             GetCommandLineArguments(args);
             //BoardTest();
-            BoardTest2();
+            //BoardTest2();
         }
 
         /// <summary>
@@ -106,6 +106,11 @@ namespace Connect_4
                 state.PrintBoard();
             }
 
+            state.PrintBoard();
+
+            State state2 = new State(State.CopyBoard(state.Board));
+            state2.AddToBoard(6,State.FIELD.MAX);
+            state2.PrintBoard();
             state.PrintBoard();
         }
 
