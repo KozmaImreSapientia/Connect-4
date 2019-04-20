@@ -5,7 +5,7 @@ Solved with Mini-max Alpha-Beta Pruning<br><br>
 ## Heuristics
 <pre>
 The heuristic in minimax is used to evaluate the relative "goodness" of a board configuration.
-    goodness = (four in a row)*1000000 + (three i a row)*10 + (two in a row)*5
+    goodness = (four in a row)*1000000 + (three in a row)*10 + (two in a row)*5
     OR
     if my opponent has 1  four in a rows, then goodness = -1000000
 </pre>
