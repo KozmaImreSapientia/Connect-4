@@ -26,12 +26,12 @@ namespace Connect_4
 
             State state = new State();
 
-            state.AddToBoard(0, State.FIELD.MAX);
+            /*state.AddToBoard(0, State.FIELD.MAX);
             state.AddToBoard(1, State.FIELD.MIN);
             state.AddToBoard(0, State.FIELD.MAX);
             state.AddToBoard(2, State.FIELD.MIN);
             state.AddToBoard(0, State.FIELD.MAX);
-            PrintStateWithHeader(state);
+            PrintStateWithHeader(state);*/
 
 
             //maxDepth = 3;
@@ -753,10 +753,60 @@ namespace Connect_4
 
                 if (alpha >= beta)
                 {
+                    state.AlphaBetaValue = alpha;   
                     return alpha;
                 }
             }
+
+            state.AlphaBetaValue = alpha;
             return alpha;
+        }
+
+        private static int AlphaBetaTimeAndDepth(State state, List<State> closedList, int alpha, int beta, int depth, int player, DateTime endTime)
+        {
+            if (IsTerminal(state) || depth == 0 || DateTime.Now >= endTime)
+            {
+                return player * HeuristicEval(state);
+            }
+
+            CreateChildrenList(state, closedList, player);
+
+            foreach (State child in state.Children)
+            {
+                closedList.Add(child);
+                alpha = max(alpha, (-1) * AlphaBeta(child, closedList, (-1) * beta, (-1) * alpha, depth - 1, -player));
+                
+                if (alpha >= beta)
+                {
+                    state.AlphaBetaValue = alpha;
+                    return alpha;
+                }
+            }
+            state.AlphaBetaValue = alpha;
+            return alpha;
+        }
+
+        private static int AlphaBetaWithTime(State state, List<State> closedList, int alpha, int beta, int player)
+        {
+            DateTime now = DateTime.Now;
+            DateTime endTime = now.AddSeconds(maxTime);
+            int bestScore = Int32.MinValue;
+            int i = 1;
+
+            while(DateTime.Now < endTime)
+            {
+                int tempScore = AlphaBetaTimeAndDepth(state, closedList, Int32.MinValue, Int32.MaxValue, i, player, endTime);
+
+                if(tempScore > bestScore)
+                {
+                    bestScore = tempScore;
+                }
+
+                i++;
+            }
+
+            state.AlphaBetaValue = bestScore;
+            return bestScore;
         }
 
         /// <summary>
@@ -771,7 +821,7 @@ namespace Connect_4
 
             //State state = new State();
             List<State> closedList = new List<State>();
-            int depth = 3;
+            int depth = 1;
             //int player = 1;
 
             while (play)
@@ -818,8 +868,7 @@ namespace Connect_4
 
             foreach (State child in state.Children)
             {
-                //TODO find how to use the value of the alfa-beta search
-                if (HeuristicEval(child) == score)
+                if (child.AlphaBetaValue == score)
                 {
                     state = child;
                     //PrintStateWithHeader(state);
