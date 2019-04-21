@@ -392,7 +392,7 @@ namespace Connect_4
 
 
 
-            if (consecutiveCount >= positionsOnPlace - 1)
+            if (consecutiveCount >= positionsOnPlace)
             {
                 return 1;
             }
@@ -769,6 +769,19 @@ namespace Connect_4
             return alpha;
         }
 
+        private static int MyMax(List<State> children)
+        {
+            int max = 0;
+            foreach (var item in children)
+            {
+                if (item.AlphaBetaValue > max)
+                {
+                    max = item.AlphaBetaValue;
+                }
+            }
+            return max;
+        }
+
         private static int AlphaBetaTimeAndDepth(State state, List<State> closedList, int alpha, int beta, int depth, int player, DateTime endTime)
         {
             if (IsTerminal(state) || depth == 0 || DateTime.Now >= endTime)
@@ -871,17 +884,32 @@ namespace Connect_4
         /// <param name="state">Game state</param>
         private static void RoundA(ref State state, List<State> closedList, int depth)
         {
-
+            if (state.Children.Count > 0)
+            {
+                state.Children.Clear();
+            }
             int score = AlphaBeta(state, closedList, Int32.MinValue, Int32.MaxValue, depth, player);
 
+            bool moved = false;
             foreach (State child in state.Children)
             {
-                if (child.AlphaBetaValue == score)
+                if (Math.Abs(child.AlphaBetaValue) == Math.Abs(score) || MyMax(child.Children) == Math.Abs(score))
                 {
+                    moved = true;
                     state = child;
                     //PrintStateWithHeader(state);
                     break;
                 }
+            }
+            if (!moved)
+            {
+                Random rand = new Random();
+                int pos = rand.Next(0, 7);
+                while (!state.CanAddToBoard(pos)){
+                    Console.WriteLine(pos);
+                    pos = rand.Next(0, 7);
+                }
+                state.AddToBoard(pos, State.FIELD.MAX);
             }
 
         }
@@ -911,6 +939,7 @@ namespace Connect_4
                 Console.Write("\n   Select column (" + 1 + "-" + State.WIDTH + "):");
                 ConsoleKeyInfo _key = Console.ReadKey();
 
+                Console.WriteLine();
                 try
                 {
                     colNum = Int32.Parse(" " + (char)_key.Key);
