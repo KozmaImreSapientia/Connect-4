@@ -983,5 +983,256 @@ namespace Connect_4
             state.PrintBoard();
         }
 
+        /// <summary>
+        /// Testing another heuristic
+        /// </summary>
+        /// <param name="state">Game state</param>
+        /// <returns></returns>
+        private static int TestHeuristic(State state)
+        {
+            int defense = 0;    // danger factor
+            int offense = 0;    // goodness factor
+
+            // Danger Factor:
+            defense += AtLeastNTokenInARow(state, 2, State.FIELD.MIN, 5, 3);    // 2= 30% of width(7)
+            //defence +=
+
+            // Goodness Factor:
+            offense += AtLeastNTokenInARow(state, 2, State.FIELD.MAX, 5, 2);    // 2= 30% of width(7)
+            //offense +=
+
+            Console.WriteLine("Defense: " + defense);
+            Console.WriteLine("Offense: " + offense);
+            Console.WriteLine("Return:" + ((offense > defense) ? (offense - defense) : (defense - offense)));
+            Console.WriteLine();
+
+            return (offense > defense) ? (offense - defense) : (-(defense - offense));
+        }
+
+        // Ha egy sorban tobb mint 30% a van az ellenfelnek az mar veszelyt jelent
+        private static int AtLeastNTokenInARow(State state, int n, State.FIELD field, int score_points, int danger_miltiplier)
+        {
+            int score = 0;
+            int tokenPcs = 0;
+            bool isUsed;
+
+            // Horizontal
+            for (int i = 0; i < state.Board.GetLength(0); ++i)
+            {
+                tokenPcs = 0;
+
+                for (int j = 0; j < state.Board.GetLength(1); ++j)
+                {
+                    //if( i==5 && j == 3)
+                    //{
+                    //    Console.WriteLine("*");
+                    //}
+                    if (state.Board[i, j] == field)
+                    {
+                        // danger factor is bigger if 3 tokens are down from 4
+                        score += ScoreCalc(tokenPcs, n, score_points, danger_miltiplier);
+                        tokenPcs++;
+                    }
+                    else
+                    {
+                        tokenPcs = 0;
+                    }
+                }
+            }
+
+            // Vertical
+            for (int j = 0; j < state.Board.GetLength(1); ++j)
+            {
+                tokenPcs = 0;
+
+                for (int i = 0; i < state.Board.GetLength(0); ++i)
+                {
+                    if (state.Board[i, j] == field)
+                    {
+                        // danger factor is bigger if 3 tokens are down from 4
+                        score += ScoreCalc(tokenPcs, n, score_points, danger_miltiplier);
+                        tokenPcs++;
+                    }
+                    else
+                    {
+                        tokenPcs = 0;
+                    }
+                }
+            }
+            // Main Diagonal
+
+            // lower part    .\
+            isUsed = false;
+            for (int i = 0; i < state.Board.GetLength(0); ++i)
+            {
+                int x = i;
+                for (int j = 0; j < state.Board.GetLength(1); ++j)
+                {
+                    tokenPcs = 0;
+                    int y = j;
+                    while (x < state.Board.GetLength(0) && y < state.Board.GetLength(1))
+                    {
+                        //Console.Write("[" + x + "," + y + "]"+ tokencount + " ");
+                        if (state.Board[x, y] == field)
+                        {
+                            // danger factor is bigger if 3 tokens are down from 4
+                            score += ScoreCalc(tokenPcs, n, score_points, danger_miltiplier);
+                            tokenPcs++;
+                        }
+                        else
+                        {
+                            tokenPcs = 0;
+                        }
+                        isUsed = false;
+                        ++x;
+                        ++y;
+                    }
+                    if (!isUsed)
+                    {
+                        isUsed = true;
+                    }
+                }
+                //Console.WriteLine();
+            }
+
+            // upper part    \'
+            isUsed = false;
+            for (int k = 0; k < state.Board.GetLength(1); ++k)
+            {
+                int x = 0;
+                for (int j = k + 1; j < state.Board.GetLength(1); ++j)
+                {
+                    tokenPcs = 0;
+                    int y = j;
+                    while (x < state.Board.GetLength(0) - k && y < state.Board.GetLength(1))
+                    {
+                        //Console.Write("[" + x + "," + y + "] ");
+                        if (state.Board[x, y] == field)
+                        {
+                            // danger factor is bigger if 3 tokens are down from 4
+                            score += ScoreCalc(tokenPcs, n, score_points, danger_miltiplier);
+                            tokenPcs++;
+                        }
+                        else
+                        {
+                            tokenPcs = 0;
+                        }
+                        isUsed = false;
+                        ++x;
+                        ++y;
+                    }
+                    if (!isUsed)
+                    {
+                        isUsed = true;
+                    }
+                }
+                //Console.WriteLine();
+            }
+
+            // Secondary Diagonal
+
+            // upper part    '/
+            isUsed = false;
+            for (int i = 0; i < state.Board.GetLength(0); ++i)
+            {
+                int x = i;
+                for (int j = 0; j < state.Board.GetLength(1); ++j)
+                {
+                    tokenPcs = 0;
+                    int y = j;
+                    while (x >= 0 && y < state.Board.GetLength(1))
+                    {
+                        //Console.Write("[" + x + "," + y + "] ");
+                        if (state.Board[x, y] == field)
+                        {
+                            // danger factor is bigger if 3 tokens are down from 4
+                            score += ScoreCalc(tokenPcs, n, score_points, danger_miltiplier);
+                            tokenPcs++;
+                        }
+                        else
+                        {
+                            tokenPcs = 0;
+                        }
+                        isUsed = false;
+                        --x;
+                        ++y;
+                    }
+                    if (!isUsed)
+                    {
+                        isUsed = true;
+                    }
+                }
+                //Console.WriteLine();
+            }
+
+            // lower part    /.
+            isUsed = false;
+            for (int k = 1; k < state.Board.GetLength(1); ++k)
+            {
+                int x = state.Board.GetLength(0) - 1;
+                for (int j = k; j < state.Board.GetLength(1); ++j)
+                {
+                    tokenPcs = 0;
+                    int y = j;
+                    while (x >= k - 1 && y < state.Board.GetLength(1))
+                    {
+                        //Console.Write("[" + x + "," + y + "] ");
+                        if (state.Board[x, y] == field)
+                        {
+                            // danger factor is bigger if 3 tokens are down from 4
+                            score += ScoreCalc(tokenPcs, n, score_points, danger_miltiplier);
+                            tokenPcs++;
+                        }
+                        else
+                        {
+                            tokenPcs = 0;
+                        }
+                        isUsed = false;
+                        --x;
+                        ++y;
+                    }
+                    if (!isUsed)
+                    {
+                        isUsed = true;
+                    }
+                }
+                //Console.WriteLine();
+            }
+
+
+            return score;
+        }
+
+        /// <summary>
+        /// Calculates additional score value for TestHeuristic()
+        /// </summary>
+        /// <param name="tokenPcs">FIELD's token number</param>
+        /// <param name="n">token number</param>
+        /// <param name="score_points">additional score when found at least "n" tokens after each other</param>
+        /// <param name="danger_miltiplier">additional score if tokenPcs > 3</param>
+        /// <returns></returns>
+        private static int ScoreCalc(int tokenPcs, int n, int score_points, int danger_miltiplier)
+        {
+            int score = 0;
+            // danger factor is bigger if 3 tokens are down from 4
+            if (tokenPcs >= n)
+            {
+                if (tokenPcs >= 3)
+                {
+                    score += score_points * danger_miltiplier;
+                }
+                else
+                {
+                    score += score_points;
+                }
+            }
+            else
+            {
+                // small score if needs later
+            }
+            return score;
+        }
+
+
     }
 }
