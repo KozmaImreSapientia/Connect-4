@@ -24,11 +24,18 @@ namespace Connect_4
             //BoardTest2();
             //GameTest();
 
-            
+            State state = new State();
 
-            
+            state.AddToBoard(0, State.FIELD.MAX);
+            state.AddToBoard(1, State.FIELD.MIN);
+            state.AddToBoard(0, State.FIELD.MAX);
+            state.AddToBoard(2, State.FIELD.MIN);
+            state.AddToBoard(0, State.FIELD.MAX);
+            PrintStateWithHeader(state);
+
+
             //maxDepth = 3;
-            StartTwoPlayerGame();
+            StartTwoPlayerGame(state);
         }
 
         /// <summary>
@@ -130,7 +137,7 @@ namespace Connect_4
             State.FIELD[,] board = new State.FIELD[State.HEIGHT, State.WIDTH];
             State s = new State(board);
 
-            StartTwoPlayerGame();//ref s);
+            StartTwoPlayerGame(s);//ref s);
 
             Console.ReadLine();
         }
@@ -166,21 +173,21 @@ namespace Connect_4
             //}
             // ide meg jon  hogy leenorizze ha 4,3 ,2 re a maxnak es utana a min-nek utana meg return maxresult-minresult, persze itt vannaka sulyzok is hozza adva
             // computer turn
-            var max4 = checkForWin(state,player,4);
+            var max4 = checkForWin(state,1,4);
             if(max4 > 0)
             {
                 return 1000000;
             }
-            var max3 = checkForWin(state, player, 3);
-            var max2 = checkForWin(state, player, 2);
+            var max3 = checkForWin(state, 1, 3);
+            var max2 = checkForWin(state, 1, 2);
             // player turn
-            var min4 = checkForWin(state, player, 4);
+            var min4 = checkForWin(state, -1, 4);
             if (min4 > 0)
             {
                 return -1000000;
             }
-            var min3 = checkForWin(state, player, 3);
-            var min2 = checkForWin(state, player, 2);
+            var min3 = checkForWin(state, -1, 3);
+            var min2 = checkForWin(state, -1, 2);
 
 
             return (max4*100 + max3*10 + max2 *5 )-(min4 * 100 + min3 * 10 + min2 * 5);
@@ -190,17 +197,30 @@ namespace Connect_4
         {
             var count = 0;
             // height
-            for(int i=0;i< 6; i++)
+            for(int i=5;i>=0; i--)
             {
                 // width
                 for(int j = 0; j < 7; j++)
                 {
-                    if (state.Board[i,j].Equals( currentTurn))
+                    if (currentTurn == -1)
                     {
-                        count += verticalPositions(i, j, state, positionsOnPlace);
-                        count += horizontalPositions(i, j, state, positionsOnPlace);
-                        count += diagonalPositions(i, j, state, positionsOnPlace);
+                        if (state.Board[i, j].Equals(State.FIELD.MIN))
+                        {
+                            count += verticalPositions(i, j, state, positionsOnPlace);
+                            count += horizontalPositions(i, j, state, positionsOnPlace);
+                            count += diagonalPositions(i, j, state, positionsOnPlace);
+                        }
                     }
+                    else
+                    {
+                        if (state.Board[i, j].Equals(State.FIELD.MAX))
+                        {
+                            count += verticalPositions(i, j, state, positionsOnPlace);
+                            count += horizontalPositions(i, j, state, positionsOnPlace);
+                            count += diagonalPositions(i, j, state, positionsOnPlace);
+                        }
+                    }// maxon a lepes
+                  
                 }
 
             }
@@ -213,10 +233,12 @@ namespace Connect_4
             var totalCount = 0;
             //! check for diagonals ith positive slope
             var j = col;
-            for (int i = 0; i < row; i++)
+            // up 
+            for (int i = row-positionsOnPlace-1; i < row; i++)
             {
+                try { 
                 if (j > 6) break;
-
+                
                 else if (state.Board[i, j] == state.Board[row, col])
                 {
                     consecutiveCount += 1;
@@ -225,20 +247,23 @@ namespace Connect_4
                 {
                     break;
                 }
+                }
+                catch (Exception e) { }
                 // increment when row is incremented
                 j += 1;
 
             }
 
-            if (consecutiveCount >= positionsOnPlace)
+            if (consecutiveCount >= positionsOnPlace-1)
             {
                 totalCount+= 1;
             }
             //! check for diagonals with negative slope
             consecutiveCount = 0;
             j = col;
-            for (int i = row; i < 0; i--)
+            for (int i = row+1; i < row+positionsOnPlace; i--)
             {
+                try { 
                 if (j > 6) break;
 
                 else if (state.Board[i, j] == state.Board[row, col])
@@ -249,11 +274,13 @@ namespace Connect_4
                 {
                     break;
                 }
+                }
+                catch (Exception e) { }
                 // increment when row is incremented
                 j += 1;
 
             }
-            if (consecutiveCount >= positionsOnPlace)
+            if (consecutiveCount >= positionsOnPlace-1)
             {
                 totalCount += 1;
             }
@@ -262,9 +289,27 @@ namespace Connect_4
 
         private static int horizontalPositions(int row, int col, State state, int positionsOnPlace)
         {
-            var consecutiveCount = 0;
-            for (int i = 0; i < col; i++)
+            var consecutiveCount = 0; 
+            for (int i = col-positionsOnPlace-1; i < col; i++)
             {
+                try { 
+                if (state.Board[row, i] == state.Board[row, col])
+                {
+                    consecutiveCount += 1;
+                }
+                else
+                {
+                    break;
+
+                    }
+                }
+                catch (Exception e) { }
+            }
+            
+
+            for (int i = col+1; i < col+positionsOnPlace; i++)
+            {
+                try { 
                 if (state.Board[row, i] == state.Board[row, col])
                 {
                     consecutiveCount += 1;
@@ -273,10 +318,13 @@ namespace Connect_4
                 {
                     break;
                 }
-
+                }
+                catch (Exception e) { }
             }
 
-            if (consecutiveCount >= positionsOnPlace)
+            
+           
+            if (consecutiveCount >= positionsOnPlace-1)
             {
                 return 1;
             }
@@ -289,8 +337,10 @@ namespace Connect_4
         private static int verticalPositions(int row, int col, State state, int positionsOnPlace)
         {
            var  consecutiveCount = 0;
-            for(int i = 0; i < row; i++)
+            // checks for the bottom
+            for(int i = row-positionsOnPlace-1; i < row; i++)
             {
+                try { 
                 if (state.Board[i,col] == state.Board[row,col])
                 {
                     consecutiveCount += 1;
@@ -299,10 +349,26 @@ namespace Connect_4
                 {
                     break;
                 }
-
+                }
+                catch (Exception e) { }
+            }
+            // checks for the top
+            for (int i = row+1; i < row+positionsOnPlace; i++)
+            {
+                try { 
+                if (state.Board[i, col] == state.Board[row, col])
+                {
+                    consecutiveCount += 1;
+                }
+                    else
+                    {
+                        break;
+                    }
+                }
+                catch (Exception) { }
             }
 
-            if(consecutiveCount>= positionsOnPlace)
+            if (consecutiveCount>= positionsOnPlace-1)
             {
                 return 1;
             }
@@ -634,13 +700,13 @@ namespace Connect_4
         /// Starts the game with user interactions.
         /// </summary>
         /// <param name="state">Game state</param>
-        private static void StartTwoPlayerGame() {//ref State state) {
+        private static void StartTwoPlayerGame(State state) {//ref State state) {
 
             bool play = true;
             int roundNumber = 0;
             State.FIELD winner = State.FIELD.EMPTY;
 
-            State state = new State();
+            //State state = new State();
             List<State> closedList = new List<State>();
             int depth = 3;
             //int player = 1;
